@@ -201,7 +201,7 @@ public class CardGame {
             });
             hiddenListCard.add(cards);
         } else {
-            List<Card> singleCard = getSingleCard(play1, guessX);
+            List<Card> singleCard = getSingleCard(play, guessX);
             System.out.println("玩家"+index+"符合条件的卡牌如下\n"+singleCard);
             if (singleCard.size() > 0) {
                 System.out.println("请输入需要出牌的编号:");
@@ -293,7 +293,7 @@ public class CardGame {
                 System.out.println("游戏结束");
                 break;
             }
-            index++;
+            index = (index+1)%3;
         }
     }
 
