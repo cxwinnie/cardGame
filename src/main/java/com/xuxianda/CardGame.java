@@ -215,15 +215,6 @@ public class CardGame {
     }
 
     /**
-     * @param play             出牌玩家
-     * @param sameNoOrTripleNo 三连号或者三个相同编号的卡牌数组
-     * @param index            玩家编号
-     */
-    public static void putTripleCards(List<Card> play, List<List<Card>> sameNoOrTripleNo, Integer index) {
-
-    }
-
-    /**
      * 每个玩家开始轮流进行卡牌操作
      */
     public static void circlePlay() {
@@ -287,7 +278,7 @@ public class CardGame {
                             }
                         }
                     }
-                    System.out.println(hiddenListCard + "\n请输入想查阅的卡牌序号");
+                    System.out.println("查阅的卡牌序号结果\n"+hiddenListCard);
             }
             if (flag) {
                 System.out.println("游戏结束");
