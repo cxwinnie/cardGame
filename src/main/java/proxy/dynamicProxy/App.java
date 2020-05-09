@@ -1,6 +1,8 @@
 package proxy.dynamicProxy;
 
 
+import org.junit.Test;
+
 import java.lang.reflect.Proxy;
 
 /**
@@ -8,11 +10,24 @@ import java.lang.reflect.Proxy;
  */
 public class App {
 
-    public static void main(String[] args) {
+    @Test
+    public void test1(){
         Mayun realMayun = new RealMayun(); //马云本人
-        ProxyMayunHandler mayunHandler = new ProxyMayunHandler(realMayun);
-        Mayun proxyMayun = (Mayun) Proxy.newProxyInstance(ClassLoader.getSystemClassLoader(), new Class[]{Mayun.class},mayunHandler);
+        ProxyHandler mayunHandler = new ProxyHandler(realMayun);
+        Mayun proxyMayun = (Mayun) Proxy.newProxyInstance(realMayun.getClass().getClassLoader(),
+                new Class[]{Mayun.class},
+                mayunHandler);
         proxyMayun.doSpeech();
+    }
+
+    @Test
+    public void test2(){
+        Zhangyong realZhangyong = new RealZhangyong(); //张勇本人
+        ProxyHandler zhangyongHandler = new ProxyHandler(realZhangyong);
+        Zhangyong proxyZhangyong = (Zhangyong) Proxy.newProxyInstance(realZhangyong.getClass().getClassLoader(),
+                new Class[]{Zhangyong.class},
+                zhangyongHandler);
+        proxyZhangyong.play();
     }
 
 }

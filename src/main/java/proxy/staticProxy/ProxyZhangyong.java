@@ -3,9 +3,9 @@ package proxy.staticProxy;
 /**
  * Created by XiandaXu on 2020/4/20.
  */
-public class ProxyMayun implements Mayun {
+public class ProxyZhangyong implements Zhangyong {
 
-    private Mayun realMayun;
+    private Zhangyong realZhangyong;
 
     /* 接受邀请 */
     public void acceptInvition(){
@@ -28,16 +28,16 @@ public class ProxyMayun implements Mayun {
     }
 
 
-    public ProxyMayun(Mayun mayun){
-        this.realMayun = mayun;
+    public ProxyZhangyong(Zhangyong zhangyong){
+        this.realZhangyong = zhangyong;
     }
 
     /* 做演讲 */
     @Override
-    public void doSpeech() {
+    public void play() {
         acceptInvition();
         arrangeTime();
-        realMayun.doSpeech();
+        realZhangyong.play();
         doLunch();
         returnHome();
     }
