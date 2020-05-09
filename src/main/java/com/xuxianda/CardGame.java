@@ -230,7 +230,7 @@ public class CardGame {
             List<Card> tripleCard = iterator.next();
             List<Integer> listNo = new ArrayList();  //存储所有已知的编号
             for (Card card : tripleCard) {
-                if (card.getNo() == 1 || card.getNo() == 7) {
+                if (card.isHidden() == false && (card.getNo() == 1 || card.getNo() == 7)) {
                     putCards.addAll(tripleCard);
                     listNo.clear();
                     iterator.remove();
@@ -245,13 +245,11 @@ public class CardGame {
                 iterator.remove();
             } else if (listNo.size() == 2) {
                 Integer max = listNo.get(0);
-                Integer min = listNo.get(0);
-                for (int i = 1; i < listNo.size(); i++) {
-                    if (max < listNo.get(i)) {
-                        max = listNo.get(i);
-                    } else if (min > listNo.get(i)) {
-                        min = listNo.get(i);
-                    }
+                Integer min = listNo.get(1);
+                if(max < min){
+                    Integer temp = max;
+                    max = min;
+                    min = temp;
                 }
                 if (max - min == 2) {
                     putCards.addAll(tripleCard);
