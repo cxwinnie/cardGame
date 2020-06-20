@@ -1,4 +1,9 @@
-package checkError.domian;
+package checkError;
+
+import checkError.domian.GlobalVal;
+import checkError.domian.GlobalValExp;
+import checkError.domian.MyFunction;
+import checkError.domian.MyProggram;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,7 +80,7 @@ public class FindRWError {
                         StringBuffer sb = new StringBuffer();
                         sb.append(g1.getOperation()).append(":").append(g1.getLineNum()).append("  ")
                                 .append(g2.getOperation()).append(":").append(g2.getLineNum()).append("  ")
-                                .append(g3.getOperation()).append(":").append(g3.getLineNum()).append("  ");
+                                .append(g3.getOperation()).append(":").append(g3.getLineNum());
                         errorList.add(sb.toString());
                     }
                 }
