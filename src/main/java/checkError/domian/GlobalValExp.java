@@ -9,7 +9,7 @@ public class GlobalValExp {
 
     private String operation;  // R or W
 
-    private String lineNum;  // the line no
+    private Integer lineNum;  // the line no
 
     public String getKey() {
         return key;
@@ -27,11 +27,12 @@ public class GlobalValExp {
         this.operation = operation;
     }
 
-    public String getLineNum() {
+    public Integer getLineNum() {
         return lineNum;
     }
 
-    public void setLineNum(String lineNum) {
+    public void setLineNum(Integer lineNum) {
         this.lineNum = lineNum;
     }
+
 }

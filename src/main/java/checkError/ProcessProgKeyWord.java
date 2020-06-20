@@ -51,8 +51,11 @@ public class ProcessProgKeyWord {
 
         for (int i = 0; i < listProgKeyWord.size(); i++) {
             ProgKeyWord progKeyWord = listProgKeyWord.get(i);
-            ProgKeyWord nextProgKeyWord = listProgKeyWord.get(i + 1);
-            if (progKeyWord.getKey().contains("main") && "(".equals(nextProgKeyWord)) {
+            ProgKeyWord nextProgKeyWord = null;
+            if (i != listProgKeyWord.size() - 1) {
+                nextProgKeyWord = listProgKeyWord.get(i + 1);
+            }
+            if (progKeyWord.getKey().contains("main") && "(".equals(nextProgKeyWord.getKey())) {
                 functionStartLine = progKeyWord.getLineNum(); // access the lineNum of the main function
                 break; //find the main function and exit
             }
@@ -70,6 +73,8 @@ public class ProcessProgKeyWord {
                     ProgKeyWord post2ProgKeyWord = listProgKeyWord.get(i + 2);
                     if (post1ProgKeyWord.getKey().equals("=")) {
                         globalVal.setValue(post2ProgKeyWord.getKey());
+                    } else if (post1ProgKeyWord.getKey().equals(";")) {
+
                     } else {  // if post1ProgKeyWord.getKey().equals("[")
                         globalVal.setArray(true);
                         String post2 = post2ProgKeyWord.getKey();
@@ -84,8 +89,8 @@ public class ProcessProgKeyWord {
                                 }
                             }
                         }
-                        myProggram.getGlobalValList().add(globalVal);
                     }
+                    myProggram.getGlobalValList().add(globalVal);
                 }
             }
         }
@@ -100,6 +105,7 @@ public class ProcessProgKeyWord {
         }
         boolean funcFlag = false; // mark if in the function
         boolean stackFlag = false;
+        boolean equalFlag = false; // mark the =
         MyFunction myFunction = new MyFunction();
         for (; i < listProgKeyWord.size(); i++) {
             ProgKeyWord progKeyWord = listProgKeyWord.get(i);
@@ -109,6 +115,7 @@ public class ProcessProgKeyWord {
                         myFunction.setIfMain(true);
                     }
                     funcFlag = true; // find the custom function name
+                    myFunction.setFunctionName(progKeyWord.getKey());
                 }
             } else {
                 if (progKeyWord.getKey().equals("{")) {
@@ -116,15 +123,53 @@ public class ProcessProgKeyWord {
                     stack.push(1);
                 } else if (progKeyWord.getKey().equals("}")) {
                     stack.pop();
-                }else if(progKeyWord.getKey().equals("(")){
+                } else if (progKeyWord.getKey().equals("(")) {
                     parenthesesStack.push(1);
-                }else if(progKeyWord.getKey().equals(")")){
+                } else if (progKeyWord.getKey().equals(")")) {
                     parenthesesStack.pop();
+                } else if (progKeyWord.getKey().equals("=") && parenthesesStack.isEmpty()) { //prevent if( int i= 1)
+                    equalFlag = true;
+                } else if (progKeyWord.getKey().equals(";") && parenthesesStack.isEmpty()) {
+                    equalFlag = false;
+                } else if (progKeyWord.getIndex() == 81) {
+                    if (progKeyWord.getKey().equals("enable_isr")
+                            || progKeyWord.getKey().equals("disable_isr")) {
+                        ProgKeyWord post2ProgKeyWord = listProgKeyWord.get(i + 2);
+                        AbleISR ableISR = new AbleISR();
+                        ableISR.setIsrFunction(new Integer(post2ProgKeyWord.getKey()));
+                        ableISR.setLineNum(progKeyWord.getLineNum());
+                        if (progKeyWord.getKey().equals("disable_isr")) {
+                            ableISR.setEnable(false);
+                        }
+                        myFunction.getAbleISRList().add(ableISR);
+                    } else {
+                        GlobalVal findGlobal = findGlobalVal(myProggram.getGlobalValList(), progKeyWord.getKey());
+                        if (findGlobal != null && parenthesesStack.isEmpty()) {
+                            GlobalValExp globalValExp = new GlobalValExp();
+                            globalValExp.setKey(progKeyWord.getKey());
+                            globalValExp.setLineNum(progKeyWord.getLineNum());
+                            if (!equalFlag) {
+                                globalValExp.setOperation("W");
+                            } else {
+                                globalValExp.setOperation("R");
+                            }
+                            ProgKeyWord post2ProgKeyWord = listProgKeyWord.get(i + 2);
+                            if (findGlobal.isArray()) {
+                                if (post2ProgKeyWord.getKey().equals("TRIGGER") || post2ProgKeyWord.getKey().equals("i")) {
+                                    globalValExp.setKey(progKeyWord.getKey() + "[TRIGGER]");
+                                    GlobalVal globalVal = new GlobalVal();
+                                    addGlobalVarrayValue(myProggram, progKeyWord.getKey() + "[TRIGGER]");
+                                } else {
+                                    globalValExp.setKey(progKeyWord.getKey() + "[" + post2ProgKeyWord.getKey() + "]");
+                                    addGlobalVarrayValue(myProggram, progKeyWord.getKey() + "[" + post2ProgKeyWord.getKey() + "]");
+                                }
+                            }
+                            myFunction.getGlobalValExpList().add(globalValExp);
+                        }
+                    }
                 }
 
-
-
-                if(stackFlag && stack.isEmpty()){  //find a whole function and search the next function
+                if (stackFlag && stack.isEmpty()) {  //find a whole function and search the next function
                     myProggram.getMyFunctionList().add(myFunction);
                     funcFlag = false;
                     stackFlag = false;
@@ -143,6 +188,27 @@ public class ProcessProgKeyWord {
             }
         }
         return false;
+    }
+
+    public static GlobalVal findGlobalVal(List<GlobalVal> globalValList, String key) {
+        for (GlobalVal globalVal : globalValList) {
+            if (globalVal.getKey().equals(key)) {
+                return globalVal;
+            }
+        }
+        return null;
+    }
+
+    public static void addGlobalVarrayValue(MyProggram myProggram, String key) {
+
+        for (GlobalVal globalVal : myProggram.getGlobalValList()){
+            if(globalVal.getKey().equals(key)){
+                return ;
+            }
+        }
+        GlobalVal globalVal = new GlobalVal();
+        globalVal.setKey(key);
+        myProggram.getGlobalValList().add(globalVal);
     }
 
 }
